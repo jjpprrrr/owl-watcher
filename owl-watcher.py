@@ -4,7 +4,7 @@
 """OWL Watcher.
 
 Usage:
-    owl-watcher.py [--open=<ot>] [--close=<ct>] [--mute]
+    owl-watcher.py [--open=<ot>] [--close=<ct>] [--update=<ut>] [--mute]
     owl-watcher.py (-h | --help)
     owl-watcher.py --version
 
@@ -13,6 +13,8 @@ Options:
     --version       Show version.
     --open=<ot>     How early to open the stream in seconds [default: 300].
     --close=<ct>    How late to close the stream in seconds [default: 1800].
+    --update=<ut>   How often to check whether to open or close the stream in seconds [default: 300].
+    --mute          Enables automatically muting the stream upon opening.
 
 """
 
