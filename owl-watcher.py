@@ -18,23 +18,61 @@ Options:
 
 """
 
-from docopt import docopt
-import urllib2
-import json
+import os
+import sys
+import time
 import datetime
+import json
+from lxml import html
+from sys import platform
+from io import BytesIO
+from urllib import urlopen
+from docopt import docopt
+from zipfile import ZipFile
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
 
 def main(arguments):
-    days = get_daily_start_end_times()
+    # Determine latest version of ChromeDriver
+    page = urlopen('https://sites.google.com/a/chromium.org/chromedriver/downloads')
+    tree = html.fromstring(page.read())
+    version = str(tree.xpath('//*[@id="sites-canvas-main-content"]/table/tbody/tr/td/div/h2/b/a/text()')[0][13:])
+    downloadPath = "https://chromedriver.storage.googleapis.com/" + str(version) + "/"
+
+    # Download and set webdriver for proper platform
+    if platform == "linux" or platform == "linux2":
+        downloadPath += "chromedriver_linux64.zip"
+        zipresp = urlopen(downloadPath)
+        with ZipFile(BytesIO(zipresp.read())) as zfile:
+            zfile.extractall('./')
+
+        os.chmod('./chromedriver', 755)
+        driver = webdriver.Chrome('./chromedriver')
+    elif platform == "darwin":
+        downloadPath += "chromedriver_mac64.zip"
+        zipresp = urlopen(downloadPath)
+        with ZipFile(BytesIO(zipresp.read())) as zfile:
+            zfile.extractall('./')
+
+        os.chmod('./chromedriver', 755)
+        driver = webdriver.Chrome('./chromedriver')
+    elif platform == "win32":
+        downloadPath += "chromedriver_win32.zip"
+        zipresp = urlopen(downloadPath)
+        with ZipFile(BytesIO(zipresp.read())) as zfile:
+            zfile.extractall('./')
+
+        driver = webdriver.Chrome('./chromedriver.exe')
+
     return
 
 # Returns a list of datetime pairs to represent the start
 # and end times for OWL matches for each day
 def get_daily_start_end_times():
     # Fetch the latest schedule from the Overwatch League API
-    req = urllib2.Request("http://api.overwatchleague.com/schedule")
-    opener = urllib2.build_opener()
-    f = opener.open(req)
-    fullSchedule = json.loads(f.read())
+    request = urlopen('https://api.overwatchleague.com/schedule')
+    fullSchedule = json.loads(request.read())
 
     day = None
     days = []

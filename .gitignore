@@ -1,0 +1,3 @@
+# ignore chromedriver binaries
+chromedriver
+chromedriver.exe
