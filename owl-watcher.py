@@ -23,10 +23,11 @@ import sys
 import time
 import datetime
 import json
-from lxml import html
 from sys import platform
+from os.path import expanduser
 from io import BytesIO
 from urllib import urlopen
+from lxml import html
 from docopt import docopt
 from zipfile import ZipFile
 from selenium import webdriver
@@ -39,11 +40,17 @@ def main(arguments):
 
     # Set webdriver for proper platform
     if platform == "linux" or platform == "linux2":
-        driver = webdriver.Chrome('./chromedriver')
+        options = webdriver.ChromeOptions()
+        options.add_argument("user-data-dir=" + expanduser("~") + "/.config/google-chrome")
+        driver = webdriver.Chrome('./chromedriver', chrome_options=options)
     elif platform == "darwin":
-        driver = webdriver.Chrome('./chromedriver')
+        options = webdriver.ChromeOptions()
+        options.add_argument("user-data-dir=" + expanduser("~") + "/Library/Application Support/Google/Chrome")
+        driver = webdriver.Chrome('./chromedriver', chrome_options=options)
     elif platform == "win32":
-        driver = webdriver.Chrome('./chromedriver.exe')
+        options = webdriver.ChromeOptions()
+        options.add_argument("user-data-dir=" + expanduser("~") + "\AppData\Local\Google\Chrome\User Data")
+        driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
 
     return
 
