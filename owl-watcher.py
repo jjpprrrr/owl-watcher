@@ -34,37 +34,48 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 
 def main(arguments):
+    # Download latest chromedriver
+    download_chromedriver()
+
+    # Set webdriver for proper platform
+    if platform == "linux" or platform == "linux2":
+        driver = webdriver.Chrome('./chromedriver')
+    elif platform == "darwin":
+        driver = webdriver.Chrome('./chromedriver')
+    elif platform == "win32":
+        driver = webdriver.Chrome('./chromedriver.exe')
+
+    return
+
+def download_chromedriver():
     # Determine latest version of ChromeDriver
     page = urlopen('https://sites.google.com/a/chromium.org/chromedriver/downloads')
     tree = html.fromstring(page.read())
     version = str(tree.xpath('//*[@id="sites-canvas-main-content"]/table/tbody/tr/td/div/h2/b/a/text()')[0][13:])
     downloadPath = "https://chromedriver.storage.googleapis.com/" + str(version) + "/"
 
-    # Download and set webdriver for proper platform
+    # Download and unzip chromedriver
     if platform == "linux" or platform == "linux2":
         downloadPath += "chromedriver_linux64.zip"
         zipresp = urlopen(downloadPath)
         with ZipFile(BytesIO(zipresp.read())) as zfile:
             zfile.extractall('./')
 
+        # enable execution of the binary
         os.chmod('./chromedriver', 755)
-        driver = webdriver.Chrome('./chromedriver')
     elif platform == "darwin":
         downloadPath += "chromedriver_mac64.zip"
         zipresp = urlopen(downloadPath)
         with ZipFile(BytesIO(zipresp.read())) as zfile:
             zfile.extractall('./')
 
+        # enable execution of the binary
         os.chmod('./chromedriver', 755)
-        driver = webdriver.Chrome('./chromedriver')
     elif platform == "win32":
         downloadPath += "chromedriver_win32.zip"
         zipresp = urlopen(downloadPath)
         with ZipFile(BytesIO(zipresp.read())) as zfile:
             zfile.extractall('./')
-
-        driver = webdriver.Chrome('./chromedriver.exe')
-
     return
 
 # Returns a list of datetime pairs to represent the start
