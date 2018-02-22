@@ -52,6 +52,24 @@ def main(arguments):
         options.add_argument("user-data-dir=" + expanduser("~") + "\AppData\Local\Google\Chrome\User Data")
         driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
 
+    # Get daily OWL schedule
+    days = get_daily_start_end_times()
+
+    # Loop
+    while True:
+        # Test if time to open stream has passed
+        if days[0][0] - datetime.timedelta(0, int(arguments['--open'])) < datetime.datetime.now():
+            driver.get("https://twitch.tv/overwatchleague")
+            assert "OverwatchLeague" in driver.title
+
+        # Test if time to close stream has passed
+        elif days[0][1] + datetime.timedelta(0, int(arguments['--close'])) < datetime.datetime.now():
+            del days[0]
+            driver.close()
+
+        # Sleep for specified update interval
+        time.sleep(float(arguments['--update']))
+
     return
 
 def download_chromedriver():
