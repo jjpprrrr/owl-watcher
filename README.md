@@ -23,6 +23,12 @@ Clone or download the repo as a zip and extract it to its own folder.
 
 Ensure that you are logged into [Twitch.tv](https://twitch.tv) on Google Chrome with an account linked to a Battle.net account.
 
+Install the required Pip packages:
+
+```
+$ pip install docopt lxml selenium
+```
+
 Follow the below usage guide to execute the script from the terminal:
 
 ```
