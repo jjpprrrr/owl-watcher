@@ -91,6 +91,8 @@ def main(arguments):
 
     sys.exit(0)
 
+# Downloads latest version of ChromeDriver,
+# which is required to control a Google Chrome session
 def download_chromedriver():
     # Determine latest version of ChromeDriver
     page = urlopen('https://sites.google.com/a/chromium.org/chromedriver/downloads')
