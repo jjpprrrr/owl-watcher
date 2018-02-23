@@ -49,7 +49,7 @@ def main(arguments):
         driver = webdriver.Chrome('./chromedriver', chrome_options=options)
     elif platform == "win32":
         options = webdriver.ChromeOptions()
-        options.add_argument("user-data-dir=" + expanduser("~") + "\AppData\Local\Google\Chrome\User Data")
+        options.add_argument("user-data-dir=" + expanduser("~") + "\\AppData\\Local\\Google\\Chrome\\User Data")
         driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
 
     # Get daily OWL schedule
