@@ -4,7 +4,7 @@
 """OWL Watcher.
 
 Usage:
-    owl-watcher.py [--open=<ot>] [--close=<ct>] [--update=<ut>] [--mute]
+    owl-watcher.py [--open=<ot>] [--close=<ct>] [--mute]
     owl-watcher.py (-h | --help)
     owl-watcher.py --version
 
@@ -13,7 +13,6 @@ Options:
     --version       Show version.
     --open=<ot>     How early to open the stream in seconds [default: 300].
     --close=<ct>    How late to close the stream in seconds [default: 1800].
-    --update=<ut>   How often to check whether to open or close the stream in seconds [default: 300].
     --mute          Enables automatically muting the stream upon opening.
 
 """
@@ -55,22 +54,42 @@ def main(arguments):
     # Get daily OWL schedule
     days = get_daily_start_end_times()
 
-    # Loop
-    while True:
-        # Test if time to open stream has passed
-        if days[0][0] - datetime.timedelta(0, int(arguments['--open'])) < datetime.datetime.now():
-            driver.get("https://twitch.tv/overwatchleague")
-            assert "OverwatchLeague" in driver.title
+    # Process days in order
+    for day in days:
+        # Calculate open and close times for the day's stream
+        openTime = day[0] - datetime.timedelta(0, int(arguments['--open']))
+        closeTime = day[1] + datetime.timedelta(0, int(arguments['--close']))
 
-        # Test if time to close stream has passed
-        elif days[0][1] + datetime.timedelta(0, int(arguments['--close'])) < datetime.datetime.now():
-            del days[0]
-            driver.close()
+        # Skip day if it is already over
+        if closeTime <= datetime.datetime.now():
+            continue
 
-        # Sleep for specified update interval
-        time.sleep(float(arguments['--update']))
+        # Check if too early to open stream
+        if datetime.datetime.now() < openTime:
+            # Calculate seconds until when to open stream
+            waitTime = openTime - datetime.datetime.now()
+            waitSecs = waitTime.days * 86400 + waitTime.seconds
 
-    return
+            # Sleep until time to open stream
+            time.sleep(waitSecs)
+
+        # Open the stream
+        print("Opening Overwatch League stream...")
+        driver.get("https://twitch.tv/overwatchleague")
+        assert "OverwatchLeague" in driver.title
+
+        # Calculate seconds until when to close stream
+        waitTime = closeTime - datetime.datetime.now()
+        waitSecs = waitTime.days * 86400 + waitTime.seconds
+
+        # Sleep until time to close stream
+        time.sleep(waitSecs)
+
+        # Close the stream
+        print("Closing Overwatch League stream...")
+        driver.close()
+
+    sys.exit(0)
 
 def download_chromedriver():
     # Determine latest version of ChromeDriver
