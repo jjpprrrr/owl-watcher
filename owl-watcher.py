@@ -26,7 +26,7 @@ import json
 from sys import platform
 from os.path import expanduser
 from io import BytesIO
-from urllib import urlopen
+from urllib.request import urlopen
 from lxml import html
 from docopt import docopt
 from zipfile import ZipFile
