@@ -27,7 +27,7 @@ Follow the below usage guide to execute the script from the terminal:
 
 ```
 Usage:
-    $ python owl-watcher.py [--open=<ot>] [--close=<ct>] [--update=<ut>] [--mute]
+    $ python owl-watcher.py [--open=<ot>] [--close=<ct>] [--mute]
     $ python owl-watcher.py (-h | --help)
     $ python owl-watcher.py --version
     
@@ -36,6 +36,5 @@ Options:
     --version       Show version.
     --open=<ot>     How early to open the stream in seconds [default: 300].
     --close=<ct>    How late to close the stream in seconds [default: 1800].
-    --update=<ut>   How often to check whether to open or close the stream in seconds [default: 300].
     --mute          Enables automatically muting the stream upon opening.
 ```
