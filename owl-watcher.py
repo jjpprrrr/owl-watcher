@@ -76,7 +76,6 @@ def main(arguments):
         # Open the stream
         print("Opening Overwatch League stream...")
         driver.get("https://twitch.tv/overwatchleague")
-        assert "OverwatchLeague" in driver.title
 
         # Mute stream if --muted argument was passed
         if bool(arguments['--muted']):
