@@ -1,3 +1,6 @@
 # ignore chromedriver binaries
 chromedriver
 chromedriver.exe
+
+# ignore log file
+debug.log
