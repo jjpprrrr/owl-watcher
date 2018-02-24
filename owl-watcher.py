@@ -78,7 +78,7 @@ def main(arguments):
         driver.get("https://twitch.tv/overwatchleague")
 
         # Mute stream if --muted argument was passed
-        if bool(arguments['--muted']):
+        if bool(arguments['--mute']):
             # Get video element from page
             elem = driver.find_element_by_xpath('//*[@id="root"]/div/div/div[2]/main/div[2]/div[3]/div/div/div[2]/figure/div/div/div[1]/video')
             # Send PAGE_DOWN key to mute stream
