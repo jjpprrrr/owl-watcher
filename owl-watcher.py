@@ -37,19 +37,19 @@ def main(arguments):
     # Download latest chromedriver
     download_chromedriver()
 
-    # Set webdriver for proper platform
+    # Setup webdriver for proper platform
     if platform == "linux" or platform == "linux2":
         options = webdriver.ChromeOptions()
         options.add_argument("user-data-dir=" + expanduser("~") + "/.config/google-chrome")
-        driver = webdriver.Chrome('./chromedriver', chrome_options=options)
     elif platform == "darwin":
         options = webdriver.ChromeOptions()
         options.add_argument("user-data-dir=" + expanduser("~") + "/Library/Application Support/Google/Chrome")
-        driver = webdriver.Chrome('./chromedriver', chrome_options=options)
     elif platform == "win32":
         options = webdriver.ChromeOptions()
         options.add_argument("user-data-dir=" + expanduser("~") + "\\AppData\\Local\\Google\\Chrome\\User Data")
-        driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
+    else:
+        print("Unsupported platform: %s" % platform)
+        sys.exit(-1)
 
     # Get daily OWL schedule
     days = get_daily_start_end_times()
@@ -75,6 +75,17 @@ def main(arguments):
 
         # Open the stream
         print("Opening Overwatch League stream...")
+
+        if platform == "linux" or platform == "linux2":
+            driver = webdriver.Chrome('./chromedriver', chrome_options=options)
+        elif platform == "darwin":
+            driver = webdriver.Chrome('./chromedriver', chrome_options=options)
+        elif platform == "win32":
+            driver = webdriver.Chrome('./chromedriver.exe', chrome_options=options)
+        else:
+            print("Unsupported platform: %s" % platform)
+            sys.exit(-1)
+
         driver.get("https://twitch.tv/overwatchleague")
 
         # Mute stream if --muted argument was passed
