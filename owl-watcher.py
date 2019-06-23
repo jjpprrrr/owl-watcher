@@ -32,15 +32,22 @@ from zipfile import ZipFile
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
+from pyvirtualdisplay import Display
 
 def main(arguments):
     # Download latest chromedriver
     download_chromedriver()
 
+    # start virtual display
+    disp = Display(visible=0, size=(1440, 900))
+    disp.start()
+
     # Setup webdriver for proper platform
     if platform == "linux" or platform == "linux2":
         options = webdriver.ChromeOptions()
         options.add_argument("user-data-dir=" + expanduser("~") + "/.config/google-chrome")
+        #options.add_argument('--headless')
+        options.add_argument('--mute-audio')
     elif platform == "darwin":
         options = webdriver.ChromeOptions()
         options.add_argument("user-data-dir=" + expanduser("~") + "/Library/Application Support/Google/Chrome")
@@ -60,6 +67,13 @@ def main(arguments):
         openTime = day[0] - datetime.timedelta(0, int(arguments['--open']))
         closeTime = day[1] + datetime.timedelta(0, int(arguments['--close']))
 
+        print('open time: ')
+        print(openTime)
+        print('close time: ')
+        print(closeTime)
+        print('current time: ')
+        print(datetime.datetime.now())
+
         # Skip day if it is already over
         if closeTime <= datetime.datetime.now():
             continue
@@ -68,9 +82,12 @@ def main(arguments):
         if datetime.datetime.now() < openTime:
             # Calculate seconds until when to open stream
             waitTime = openTime - datetime.datetime.now()
+            print('wait time: ')
+            print(waitTime)
             waitSecs = waitTime.days * 86400 + waitTime.seconds
 
             # Sleep until time to open stream
+            print('Too early for stream... Going to sleep...')
             time.sleep(waitSecs)
 
         # Open the stream
@@ -87,6 +104,13 @@ def main(arguments):
             sys.exit(-1)
 
         driver.get("https://twitch.tv/overwatchleague")
+
+        try:
+            drops = driver.find_element_by_xpath('//span[@class="drops-campaign-details__drops-success tw-strong"]')
+            print(drops)
+        except:
+            print('drop not found')
+
 
         # Mute stream if --muted argument was passed
         if bool(arguments['--mute']):
@@ -181,6 +205,7 @@ def get_daily_start_end_times():
                         day[1] = endTime
 
     # Return daily info
+    print(days)
     return days
                 
 if __name__ == '__main__':
